@@ -1,0 +1,14 @@
+*
+!*/
+!*.*
+*~
+[._]*.sw[a-p]
+.netrwhist
+.DS_Store
+tags
+out
+!LICENSE
+!README
+choose_a_license
+!license
+!install

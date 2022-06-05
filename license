@@ -1,0 +1,11 @@
+#!/bin/bash
+
+if [[ "$1" == 'list' ]]; then
+    ls -larp "$XDG_DATA_HOME/license/scripts"
+else
+    if hash "license-$1" 2>/dev/null; then
+        "license"-"$1"
+    else
+        ls "$XDG_DATA_HOME/license/scripts"
+    fi
+fi

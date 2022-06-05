@@ -1,0 +1,14 @@
+license
+
+License Wrapper Scripts using https://github.com/github/choosealicense.com
+
+Installation:
+---
+
+Run ./install
+
+Update Path
+
+license SOME_LICENSE
+
+

@@ -1,0 +1,48 @@
+#!/bin/bash
+
+set -eu
+
+fullname="$USER"
+xdg_dir="$XDG_DATA_HOME/license"
+xdg_scripts_dir="$xdg_dir/scripts"
+
+rm -rf "$xdg_dir"
+mkdir -p "$xdg_scripts_dir"
+
+# Clone Latest Sources
+rm -rf choose_a_license 
+git clone "https://github.com/github/choosealicense.com" choose_a_license
+
+# Put the wrapper-script in place
+cp "./license" "$XDG_DATA_HOME/license"
+
+
+# Build the license-scripts
+for license in ./choose_a_license/_licenses/* ; do
+    base=$(basename "$license")
+    script="$xdg_scripts_dir/license-${base%.txt}"
+
+    # FIXME: mpl license with `---` in it is not copied correctly
+    line=$(grep -n "\---" "$license" | tail -1 | grep -o "\d\d")
+    echo "#!/bin/bash" > "$script"
+    echo "cat <<- EOM
+$(tail --lines="+$(((line+ 2)))" "$license" \
+        | sed "
+            s/\[year\]/\$(date "+%Y")/g;
+            s/\<year\>/\$(date "+%Y")/g;
+            s/\[yyyy\]/\$(date "+%Y")/g;
+            s/\<name of author\>/$fullname/g;
+            s/\[name of copyright owner\]/$fullname/g
+            s/\[fullname\]/$fullname/g;"
+        )
+EOM" >> "$script"
+
+    # Give user exec permissions ---
+    chmod u+x "$script"
+done
+
+echo
+echo "DONE: Exited with Code: $?"
+echo "Add: $XDG_DATA_HOME/license into your path"
+echo "Add: $XDG_DATA_HOME/license/scripts into your path"
+echo
